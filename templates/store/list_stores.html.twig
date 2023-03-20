@@ -1,0 +1,8 @@
+<div class="sidebar-widget brands">
+    <h2 class="title">Our Brands</h2>
+    <ul>
+        {% for i in 0..5 %}
+            <li><a href="{{ url('app_store') }}">Menu {{ i }} </a><span>(45)</span></li>
+        {% endfor %}
+    </ul>
+</div>

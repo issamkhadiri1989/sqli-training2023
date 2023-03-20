@@ -1,0 +1,11 @@
+<div class="sidebar-widget category">
+    <h2 class="title">Category</h2>
+    <ul>
+        {% for item,count in categories %} {# Equivalent foreach (categories as item => count) #}
+            <li>
+                <a href="{{ url('app_category') }}">{{ item }}</a>
+                <span>({{ count }})</span>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
