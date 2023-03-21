@@ -1,0 +1,20 @@
+{% macro breadcrumb(steps) %}
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ url('app_index') }}">Home</a>
+        </li>
+        {% for step in steps %}
+            {% set classes = 'breadcrumb-item' %}
+            {% if loop.last %}
+                {% set classes = classes ~ ' active' %}
+            {% endif %}
+            <li class="{{ classes }}">
+                {% if loop.last %}
+                    {{ step.title }}
+                {% else %}
+                    <a href="{{ step.target }}">{{ step.title }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}

@@ -1,15 +1,11 @@
+{% import 'macros/generator.html.twig' as generator %}
 {% extends 'layout.html.twig' %}
 {% block title %}Some  Product details page {% endblock %}
 {% block breadcrumb %}
-    <div class="breadcrumb-wrap">
-        <div class="container">
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Products</a></li>
-                <li class="breadcrumb-item active">product details</li>
-            </ul>
-        </div>
-    </div>
+    {{ generator.breadcrumb([
+        {target: url('app_category'), title: 'My Category'},
+        {title: 'My dummy product'}
+    ]) }}
 {% endblock %}
 {% block content %}
     <div class="product-detail">
