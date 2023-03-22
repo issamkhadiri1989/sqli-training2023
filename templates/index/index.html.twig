@@ -6,33 +6,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="product-search">
-                                        <input type="email" value="Search">
-                                        <button><i class="fa fa-search"></i></button>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="product-short">
-                                        <div class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Product short
-                                                by</a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a href="#" class="dropdown-item">Newest</a>
-                                                <a href="#" class="dropdown-item">Popular</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% for i in 0..5 %}
-                            {{ include('partials/_product_item.html.twig') }}
-                        {% endfor %}
-                    </div>
+                    {{ include('partials/_products_container.html.twig', {products: products}) }}
                     <div class="col-lg-12">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">

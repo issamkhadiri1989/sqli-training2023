@@ -105,4 +105,16 @@ class Cart
 
         return $this;
     }
+
+    /**
+     * Computes and gets the total amount of the cart.
+     *
+     * @return float
+     */
+    public function computeTotal(): float
+    {
+        return \array_reduce($this->cartItems->toArray(), function ($previous, CartItem $item) {
+            return $previous + $item->computeTotal();
+        }, 0);
+    }
 }

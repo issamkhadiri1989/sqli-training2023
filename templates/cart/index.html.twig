@@ -1,22 +1,10 @@
+{% import 'macros/generator.html.twig' as generator %}
 {% extends 'layout.html.twig' %}
-
-{% block title %}Hello CartController!{% endblock %}
+{% block title %}Cart{% endblock %}
 {% block breadcrumb %}
-<!-- Breadcrumb Start -->
-<div class="breadcrumb-wrap">
-    <div class="container">
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Products</a></li>
-            <li class="breadcrumb-item active">Cart</li>
-        </ul>
-    </div>
-</div>
-<!-- Breadcrumb End -->
+    {{ generator.breadcrumb([{title: 'Cart'}]) }}
 {% endblock %}
 {% block content %}
-
-    <!-- Cart Start -->
     <div class="cart-page">
         <div class="container">
             <div class="row">
@@ -34,48 +22,22 @@
                             </tr>
                             </thead>
                             <tbody class="align-middle">
+                            {% for item in cart.cartItems %}
                             <tr>
                                 <td><a href="#"><img src="https://via.placeholder.com/83x100" alt="Image"></a></td>
-                                <td><a href="#">Product Name</a></td>
-                                <td>$22</td>
+                                <td><a href="#">{{ item.product.name }}</a></td>
+                                <td>{{ item.product.unitPrice|number_format(2, ',', ' ') }} MAD</td>
                                 <td>
                                     <div class="qty">
                                         <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                        <input type="text" value="1">
+                                        <input type="text" value="{{ item.quantity }}">
                                         <button class="btn-plus"><i class="fa fa-plus"></i></button>
                                     </div>
                                 </td>
-                                <td>$22</td>
+                                <td>{{ item.computeTotal|number_format(2, ',', ' ') }} MAD </td>
                                 <td><button><i class="fa fa-trash"></i></button></td>
                             </tr>
-                            <tr>
-                                <td><a href="#"><img src="https://via.placeholder.com/83x100" alt="Image"></a></td>
-                                <td><a href="#">Product Name</a></td>
-                                <td>$22</td>
-                                <td>
-                                    <div class="qty">
-                                        <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                        <input type="text" value="1">
-                                        <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </td>
-                                <td>$22</td>
-                                <td><button><i class="fa fa-trash"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td><a href="#"><img src="https://via.placeholder.com/83x100" alt="Image"></a></td>
-                                <td><a href="#">Product Name</a></td>
-                                <td>$22</td>
-                                <td>
-                                    <div class="qty">
-                                        <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                        <input type="text" value="1">
-                                        <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </td>
-                                <td>$22</td>
-                                <td><button><i class="fa fa-trash"></i></button></td>
-                            </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -92,9 +54,9 @@
                     <div class="cart-summary">
                         <div class="cart-content">
                             <h3>Cart Summary</h3>
-                            <p>Sub Total<span>$22</span></p>
+                            <p>Sub Total<span>{{ cart.computeTotal|number_format(2, ',', ' ') }} MAD</span></p>
                             <p>Shipping Cost<span>$1</span></p>
-                            <h4>Grand Total<span>$23</span></h4>
+                            <h4>Grand Total<span>{{ cart.computeTotal|number_format(2, ',', ' ') }} MAD</span></h4>
                         </div>
                         <div class="cart-btn">
                             <button>Update Cart</button>

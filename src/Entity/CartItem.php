@@ -66,4 +66,14 @@ class CartItem
 
         return $this;
     }
+
+    /**
+     * Computes and get the total amount of the cart item.
+     *
+     * @return float
+     */
+    public function computeTotal(): float
+    {
+        return $this->quantity * $this->getProduct()->getUnitPrice();
+    }
 }
