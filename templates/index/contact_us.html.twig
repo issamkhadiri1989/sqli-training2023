@@ -1,3 +1,4 @@
+{% import 'macros/generator.html.twig' as generator %}
 {% extends 'layout.html.twig' %}
 {% block title %}Keep in touch !{% endblock %}
 {% block content %}
@@ -6,25 +7,33 @@
             <div class="row align-items-center">
                 <div class="col-md-7">
                     <div class="form">
-                        <form action="" method="">
+                        {{ form_start(contact_form, {'attr': {'novalidate': 'novalidate'}}) }}
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <input type="text" class="form-control" placeholder="Your Name"/>
+                                    {#<input type="text" class="form-control" placeholder="Your Name"/>#}
+                                    {{ form_widget(contact_form.name, {'attr': {'class': 'form-control', 'placeholder': 'Your Name'}}) }}
+                                    {{ form_errors(contact_form.name) }}
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <input type="email" class="form-control" placeholder="Your Email"/>
+                                    {#<input type="email" class="form-control" placeholder="Your Email"/>#}
+                                    {{ form_widget(contact_form.email, {'attr': {'class': 'form-control', 'placeholder': 'Your Email'}}) }}
+                                    {{ form_errors(contact_form.email) }}
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Subject"/>
+                                {#<input type="text" class="form-control" placeholder="Subject"/>#}
+                                {{ form_widget(contact_form.subject, {'attr': {'class': 'form-control', 'placeholder': 'Subject'}}) }}
+                                {{ form_errors(contact_form.subject) }}
                             </div>
                             <div class="form-group">
-                                <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+                                {#<textarea class="form-control" rows="5" placeholder="Message"></textarea>#}
+                                {{ form_widget(contact_form.message, {'attr': {'class': 'form-control', 'placeholder': 'Message', 'rows': 5}}) }}
+                                {{ form_errors(contact_form.message) }}
                             </div>
                             <div>
                                 <button type="submit">Send Message</button>
                             </div>
-                        </form>
+                        {{ form_end(contact_form) }}
                     </div>
                 </div>
                 <div class="col-md-5">
@@ -54,12 +63,5 @@
     </div>
 {% endblock %}
 {% block breadcrumb %}
-    <div class="breadcrumb-wrap">
-        <div class="container">
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url('app_index') }}">Home</a></li>
-                <li class="breadcrumb-item active">Contact</li>
-            </ul>
-        </div>
-    </div>
+    {{ generator.breadcrumb([{title: 'Keep in touch'}]) }}
 {% endblock %}

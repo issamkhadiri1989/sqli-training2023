@@ -1,18 +1,15 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-
+    # Parameters are defined here. They can be a simple value or get from an Env()
+    app.mailer.admin_email: '%env(APP_ADMIN_EMAIL)%'
+    app.cart.persist_path: '%kernel.project_dir%/data'
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $adminEmail: 'admin@system.com'  # here we bind all $adminEmail parameters to this value
+#            string $supportEmail: 'support@system.com'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
@@ -21,7 +18,11 @@ services:
             - '../src/Enum/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # The following two implementation are just an example of how to inject services with Interface
     App\Service\CartInterface $cartFile: '@App\Service\CartFile'
     App\Service\CartInterface: '@App\Service\CartHandler'
+
+    # The following example shows how to inject a parameter inside a service
+    App\Service\CartFile:
+        arguments:
+            $dataPath: '%app.cart.persist_path%'

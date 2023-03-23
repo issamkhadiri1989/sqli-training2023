@@ -16,6 +16,12 @@ class CartController extends AbstractController
 {
     private readonly CartInterface $cartHandler;
 
+    /**
+     * This will inject the default service CartHandler.
+     * If you want to use the CartFile, rename the argument to $cartFile. @see config/services.yaml file.
+     *
+     * @param CartInterface $handler
+     */
     public function __construct(CartInterface $handler)
     {
         $this->cartHandler = $handler;
