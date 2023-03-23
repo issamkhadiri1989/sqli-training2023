@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Cart;
+use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Enum\CartStatus;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * This service will handle all operations that occur on the cart.
  */
-class CartHandler
+class CartHandler implements CartInterface
 {
     private SessionInterface $session;
 
@@ -35,9 +36,48 @@ class CartHandler
      *
      * @return void
      */
-    public function addToCart(Product $product, int $quantity)
+    public function addToCart(Product $product, int $quantity): void
     {
         // @TODO call the service CartItemManager to add products to the  current cart instance.
+    }
+
+    public function removeFromCart(Product $product): void
+    {
+        $cart = $this->getCartInstance();
+
+        /*$cartItems = \array_filter($cart->getCartItems()->toArray(), function (CartItem $item) use ($product) {
+            return $item->getProduct() === $product;
+        });*/
+
+        $cartItems = $cart->getCartItems()
+            ->filter(function (CartItem $item) use ($product) {
+                return $item->getProduct() === $product;
+            });
+
+//        $cartItems = $cart->getCartItems()->filter(fn (CartItem $item) => $item->getProduct() === $product);
+
+        if (empty($cartItems) === false) {
+            $this->manager->remove($cartItems[0]);
+            $this->manager->flush();
+        }
+    }
+
+    public function getProduct(int $id): Product
+    {
+        return $this->manager
+            ->getRepository(Product::class)
+            ->find($id);
+    }
+
+    public function clearCart(): void
+    {
+        $cart = $this->getCartInstance();
+
+        foreach ($cart->getCartItems() as $item) {
+            $this->manager->remove($item);
+        }
+
+        $this->manager->flush();
     }
 
     /**

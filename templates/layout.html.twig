@@ -55,6 +55,13 @@
             {% block breadcrumb %}{% endblock %}
         </div>
     </div>
+    {% for label,messages in app.flashes %}
+        <div class="alert alert-{{ label }}">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor%}
+        </div>
+    {% endfor %}
     {% block content %}{% endblock %}
     <div class="footer">
         <div class="container-fluid">

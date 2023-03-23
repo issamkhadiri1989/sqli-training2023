@@ -23,13 +23,15 @@ class CartItemRepository extends ServiceEntityRepository
         parent::__construct($registry, CartItem::class);
     }
 
-    public function save(CartItem $entity, bool $flush = false): void
+    public function save(CartItem $entity, bool $mustPersist = false): void
     {
-        $this->getEntityManager()->persist($entity);
+        $manager = $this->getEntityManager();
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
+        if (true === $mustPersist) {
+            $manager->persist($entity);
         }
+
+        $manager->flush();
     }
 
     public function remove(CartItem $entity, bool $flush = false): void
