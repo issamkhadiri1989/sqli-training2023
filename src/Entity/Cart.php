@@ -8,6 +8,7 @@ use App\Enum\CartStatus;
 use App\Repository\CartRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
@@ -131,5 +132,41 @@ class Cart
         $this->shippingAddress = $shippingAddress;
 
         return $this;
+    }
+
+    /**
+     * This function is equivalent to the CartItemManager::findExistingProductInCart() function.
+     *
+     * @param Product $product
+     *
+     * @return CartItem|null
+     */
+    public function filterByProduct(Product $product): ?CartItem
+    {
+        $items = $this->cartItems->filter(function (CartItem $item) use ($product) {
+            return $product === $item->getProduct();
+        });
+
+        return ($items->isEmpty() === true) ? null : $items->first();
+    }
+
+    /**
+     * Finds and get the CartItem that holds the given Product if exists.
+     *
+     * @param Product $product
+     *
+     * @return CartItem|null
+     */
+    public function findCartItemFor(Product $product): ?CartItem
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('product', $product));
+
+        $collectionOfItems = $this->cartItems->matching($criteria);
+        if ($collectionOfItems->isEmpty()) {
+            return null;
+        }
+
+        return $collectionOfItems->first();
     }
 }

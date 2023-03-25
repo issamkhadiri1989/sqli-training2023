@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Form\Type\CartItemType;
 use App\Form\Type\ProductType;
@@ -34,7 +35,10 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Do something with the CartItem instance like persisting it into the database
-            $builder->saveNewCartItem($cartItem);
+            // Pass true or false to the second argument of this function so than you can use one of the methods to filter:
+            // if true is passed, then you can use the Criteria condition using Doctrine in the Cart entity @see Cart::findCartItemFor
+            // if false is passed, then you will use the ordinary filter() method.
+            $builder->saveCartItem($cartItem, true/*, true or false*/);
             $this->addFlash('success', 'Product added successfully to the cart');
 
             return $this->redirectToRoute('app_cart');
