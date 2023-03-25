@@ -6,6 +6,7 @@ namespace App\Form\Type;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\Store;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -24,6 +25,16 @@ class ProductType extends AbstractType
             ->add('fullDescription', TextareaType::class)
             ->add('unitPrice', TextType::class)
             ->add('quantity', IntegerType::class)
+            ->add('store', EntityType::class, [
+                'class' => Store::class,
+                // here we can use a callable to customize the way we display choices
+                'choice_label' => function (Store $arg) {
+                    // do something if you want
+                    $name = \strtoupper($arg->getName());
+
+                    return $name;
+                },
+            ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
@@ -33,6 +44,7 @@ class ProductType extends AbstractType
 //                'multiple' => true,
 //                'expanded' => true,
             ])
+            // the following field wont be mapped but we still can use it
             ->add('test', ChoiceType::class, [
                 'mapped' => false,
                 'choices' => [
@@ -41,8 +53,7 @@ class ProductType extends AbstractType
                     'key3' => 'value3',
                 ],
 //                'expanded' => true,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

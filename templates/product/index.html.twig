@@ -1,3 +1,4 @@
+{% form_theme addToCartForm 'forms/add_to_cart_item.html.twig' %}
 {% import 'macros/generator.html.twig' as generator %}
 {% extends 'layout.html.twig' %}
 {% block title %}{{ product.name }}{% endblock %}
@@ -8,28 +9,12 @@
         {title: product.name}
     ]) }}
 {% endblock %}
+{% block styles %}
+    {# override some part of the CSS #}
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet"/>
+{% endblock %}
 {% block scripts %}
-    <script>
-        $(document).ready(function () {
-            $('.check-availability').on('click', function() {
-                const quantity = parseInt($(this).parent().find('.quantity').val());
-                $.ajax({
-                    url: 'http://localhost:8000/product/check/53',
-                    method: 'GET',
-                    data: {
-                        qty: quantity
-                    },
-                    success: function (data)
-                    {
-                        // i will do my job
-                        // alert();
-                        console.log(data);
-                        $('#alert').html(data);
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="{{ asset('js/addToCart.js') }}"></script>
 {% endblock %}
 {% block content %}
     <div class="product-detail">
@@ -64,15 +49,11 @@
                                     </p>
                                 </div>
                                 {% if product.quantity > 0 %}
+                                    {{ form_start(addToCartForm) }}
                                     <div id="alert"></div>
-                                    <div class="quantity">
-                                        <h4>Quantity:</h4>
-                                        <div class="qty">
-                                            <button class="btn-minus check-availability"><i class="fa fa-minus"></i></button>
-                                            <input type="text" value="1" class="quantity">
-                                            <button class="btn-plus check-availability"><i class="fa fa-plus"></i></button>
-                                        </div>
-                                    </div>
+                                    {# the vars.value contains the CartItem from which the form has been created. #}
+                                    {% set product = addToCartForm.vars.value.product %}
+                                    {{ form_row(addToCartForm, {'attr': {'data-product-id': product.id}}) }}
                                 {% else %}
                                     <label class="badge badge-danger">
                                         Out of store
@@ -80,7 +61,10 @@
                                 {% endif %}
                                 <div class="action">
                                     {% if product.quantity > 0 %}
-                                        <a href="{{ url('add_to_cart', {id: product.id}) }}"><i class="fa fa-cart-plus"></i></a>
+                                        <button type="submit" class="btn-blue">
+                                            <i class="fa fa-cart-plus"></i>
+                                        </button>
+                                        {{ form_end(addToCartForm) }}
                                     {% endif %}
                                     <a href="#"><i class="fa fa-heart"></i></a>
                                     <a href="#"><i class="fa fa-search"></i></a>

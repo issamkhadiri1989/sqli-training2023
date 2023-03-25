@@ -1,4 +1,6 @@
 {% form_theme addForm _self %}
+{# if you want to move the customization to a seperate file use the following code instead of the above code #}
+{#{% form_theme addForm 'forms/custom_product_theme.html.twig' %}#}
 {% extends 'layout.html.twig' %}
 {% block content %}
     <div class="container">
@@ -14,13 +16,13 @@
 {# Customizing the Product form type #}
 {% block _product_unitPrice_row %}
     <div class="form-group row">
-        {#<label for="inputPassword" class="col-sm-2 col-form-label">Password</label>#}
+        {# <label for="inputPassword" class="col-sm-2 col-form-label">Password</label> #}
         {{ form_label(form, '', {'label_attr': {'class': 'col-sm-2 col-form-label'}}) }}
         <div class="col-sm-10">
-            {#<input type="password" class="form-control" id="inputPassword">#}
+            {# <input type="password" class="form-control" id="inputPassword"> #}
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">$</span>
+                    <span class="input-group-text">MAD</span>
                 </div>
                 {# <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)"> #}
                 {{ form_widget(form, {'attr': {'class': 'form-control-plaintext'}}) }}
@@ -28,6 +30,33 @@
                     <span class="input-group-text">.00</span>
                 </div>
             </div>
+        </div>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block _product_store_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{% block _product_category_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{% block text_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{% block integer_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{# because this block is used several time we can put the common code and then call the function block() see the code above #}
+{% block reusable_content %}
+    <div class="form-group row">
+        {{ form_label(form, '', {'label_attr': {'class': 'col-sm-2 col-form-label'}}) }}
+        <div class="col-sm-10">
+            {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}
         </div>
         {{ form_errors(form) }}
     </div>

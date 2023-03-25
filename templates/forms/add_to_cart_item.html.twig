@@ -1,0 +1,18 @@
+{% block _cart_item_quantity_row %}
+    <div class="quantity">
+        {{ form_label(form, 'Quantity:') }}
+        <div class="qty">
+            <button type="button" class="btn-minus check-availability">
+                <i class="fa fa-minus"></i>
+            </button>
+            {{ form_widget(form, {'attr': {'class': 'quantity'}}) }}
+            <button type="button" class="btn-plus check-availability">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        {{ form_errors(form)}}
+    </div>
+{% endblock %}
+{% block _cart_item_quantity_label %}
+    <h4>{{ label }}</h4>
+{% endblock %}

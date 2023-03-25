@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Form\Type\CartItemType;
 use App\Form\Type\ProductType;
+use App\Repository\ProductRepository;
+use App\Service\CartInterface;
+use App\Service\CartItemManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -16,16 +20,33 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/product')]
 class ProductController extends AbstractController
 {
+    public function __construct(private readonly CartInterface $cartHandler)
+    {
+    }
+
     #[Route('/{productSlug}', name: 'app_product', priority: 1)]
     #[Entity('product', options: ['mapping' => ['productSlug' => 'slug']])]
-    public function index(Product $product): Response
+    public function index(Product $product, Request $request, CartItemManager $builder): Response
     {
+        $cartInstance = $this->cartHandler->getCartInstance();
+        $cartItem = $builder->createCartItemInstance($cartInstance, $product, 1);
+        $form = $this->createForm(CartItemType::class, $cartItem);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Do something with the CartItem instance like persisting it into the database
+            $builder->saveNewCartItem($cartItem);
+            $this->addFlash('success', 'Product added successfully to the cart');
+
+            return $this->redirectToRoute('app_cart');
+        }
+
         return $this->render('product/index.html.twig', [
             'product' => $product,
+            'addToCartForm' => $form->createView(),
         ]);
     }
 
-    #[Route('/check/{id}', name: 'app_product_check', methods: ['GET'])]
+    #[Route('/check/{id}', name: 'app_product_check', methods: ['GET'], options: ['expose' => true])]
     public function checkAvailability(Product $product, Request $request): Response
     {
         // get a query parameter from the URL
@@ -59,15 +80,17 @@ class ProductController extends AbstractController
     }
 
     #[Route('/add', name: 'app_add_product', priority: 2)]
-    public function add(Request $request): Response
+    public function add(Request $request, ProductRepository $repository): Response
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // @TODO persist & flush to database
             $var = $form->get('test')->getData();
-            dump($var);
+            $repository->save($product, true);
+            $this->addFlash('success', 'Product saved successfully');
+
+            return $this->redirectToRoute('app_add_product');
         }
 
         return $this->render(

@@ -40,6 +40,10 @@ class Product
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Store $store = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,6 +129,18 @@ class Product
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
+    }
+
+    public function setStore(?Store $store): self
+    {
+        $this->store = $store;
 
         return $this;
     }

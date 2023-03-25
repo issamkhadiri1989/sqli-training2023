@@ -1,0 +1,22 @@
+{% block _product_category_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{% block text_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{% block integer_row %}
+    {{ block('reusable_content') }}
+{% endblock %}
+
+{# because this block is used several time we can put the common code and then call the function block() see the code above #}
+{% block reusable_content %}
+    <div class="form-group row">
+        {{ form_label(form, '', {'label_attr': {'class': 'col-sm-2 col-form-label'}}) }}
+        <div class="col-sm-10">
+            {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

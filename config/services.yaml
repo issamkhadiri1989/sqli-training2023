@@ -16,6 +16,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Enum/'
+            - '../src/Model/'
             - '../src/Kernel.php'
 
     # The following two implementation are just an example of how to inject services with Interface

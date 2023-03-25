@@ -30,6 +30,9 @@ class Cart
     #[ORM\OneToMany(mappedBy: 'cart', targetEntity: CartItem::class, orphanRemoval: true)]
     private Collection $cartItems;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?ShippingAddress $shippingAddress = null;
+
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
@@ -116,5 +119,17 @@ class Cart
         return \array_reduce($this->cartItems->toArray(), function ($previous, CartItem $item) {
             return $previous + $item->computeTotal();
         }, 0);
+    }
+
+    public function getShippingAddress(): ?ShippingAddress
+    {
+        return $this->shippingAddress;
+    }
+
+    public function setShippingAddress(?ShippingAddress $shippingAddress): self
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
     }
 }

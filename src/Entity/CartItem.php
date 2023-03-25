@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\CartItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
 class CartItem
@@ -16,6 +17,7 @@ class CartItem
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotNull, Assert\NotBlank, Assert\GreaterThan(0)]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne]
@@ -75,5 +77,12 @@ class CartItem
     public function computeTotal(): float
     {
         return $this->quantity * $this->getProduct()->getUnitPrice();
+    }
+
+    public function updateQuantity(int $quantity): self
+    {
+        $this->quantity += $quantity;
+
+        return $this;
     }
 }
