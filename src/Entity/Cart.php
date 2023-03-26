@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 class Cart
@@ -29,6 +30,7 @@ class Cart
     private ?CartStatus $status = null;
 
     #[ORM\OneToMany(mappedBy: 'cart', targetEntity: CartItem::class, orphanRemoval: true)]
+    #[Assert\Valid(groups: ['add_to_cart', 'cart'])]
     private Collection $cartItems;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]

@@ -18,4 +18,6 @@ interface CartInterface
     public function getProduct(int $id): Product;
 
     public function clearCart(): void;
+
+    public function updateCart(Cart $cart): void;
 }

@@ -150,4 +150,11 @@ class CartHandler implements CartInterface
 
         return $cart;
     }
+
+    public function updateCart(Cart $cart): void
+    {
+        $this->manager
+            ->getRepository(Cart::class)
+            ->save($cart);
+    }
 }

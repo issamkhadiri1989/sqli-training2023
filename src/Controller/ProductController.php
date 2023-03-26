@@ -50,7 +50,13 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/check/{id}', name: 'app_product_check', methods: ['GET'], options: ['expose' => true])]
+    #[Route(
+        path: '/check/{id}',
+        name: 'app_product_check',
+        methods: ['GET'],
+        options: ['expose' => true],
+        requirements: ['id' => '\d+']
+    )]
     public function checkAvailability(Product $product, Request $request): Response
     {
         // get a query parameter from the URL

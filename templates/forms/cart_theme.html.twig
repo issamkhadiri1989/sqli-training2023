@@ -1,0 +1,46 @@
+{# first let's customize the entire row #}
+{# here we are displaying the whole CartItem view #}
+{% block _cart_cartItems_entry_row %}
+    {# we can get the object used to create the form and do somthing with it #}
+    {% set cartItem = form.vars.value %}
+    {% if cartItem is not null %}
+        {# like get the product from the Item #}
+        {% set product = cartItem.product %}
+        <tr>
+            <td><a href="#"><img src="https://via.placeholder.com/83x100" alt="Image"></a></td>
+            <td><a href="#">{{ product.name }}</a></td>
+            <td>{{ product.unitPrice|number_format(2, ',', ' ') }} MAD</td>
+            <td>
+                {# here we need to render the entire row #}
+                {{ form_widget(form, {'attr': {'class': 'quantity'}}) }}
+            </td>
+            <td>{{ cartItem.computeTotal|number_format(2, ',', ' ') }} MAD</td>
+            <td>
+                <button type="button" class="delete-cart-item"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    {% endif %}
+{% endblock %}
+
+{# next let's customize the rendering of the widget of each entry #}
+{% block _cart_cartItems_entry_widget %}
+    {# here we have access to the entire object #}
+    <div class="qty">
+        <button type="button" class="btn-minus check-availability">
+            <i class="fa fa-minus"></i>
+        </button>
+        {# display each field #}
+        {{ form_widget(form.quantity) }}
+        <button type="button" class="btn-plus check-availability">
+            <i class="fa fa-plus"></i>
+        </button>
+    </div>
+    {# display each field's errors #}
+    {{ form_errors(form.quantity) }}
+{% endblock %}
+
+{# we can also customize a specific  field of the entry #}
+{% block _cart_cartItems_entry_quantity_widget %}
+    {# pay attention to the variables we are using #}
+    <input type="text" {{ block('widget_attributes') }} name="{{ full_name }}" id="{{ id }}" value="{{ value }}"/>
+{% endblock %}

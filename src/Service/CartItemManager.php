@@ -60,7 +60,8 @@ class CartItemManager
      * Performs writing to database.
      *
      * @param CartItem $entity
-     *
+     * @param int $quantity
+     * 
      * @return void
      */
     private function doSaveItem(CartItem $entity, int $quantity): void

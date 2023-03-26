@@ -1,10 +1,12 @@
 {% import 'macros/generator.html.twig' as generator %}
+{% form_theme form 'forms/cart_theme.html.twig' %}
 {% extends 'layout.html.twig' %}
 {% block title %}Cart{% endblock %}
 {% block breadcrumb %}
     {{ generator.breadcrumb([{title: 'Cart'}]) }}
 {% endblock %}
 {% block content %}
+    {{ form_start(form) }}
     <div class="cart-page">
         <div class="container">
             <div class="row">
@@ -21,22 +23,12 @@
                                 <th>Remove</th>
                             </tr>
                             </thead>
+                            {# with  the allow_add enabled, you can get the new line's prototype with #}
+                            {# {{ form_row(form.cartItems.vars.prototype)|e }} #}
                             <tbody class="align-middle">
-                            {% for item in cart.cartItems %}
-                            <tr>
-                                <td><a href="#"><img src="https://via.placeholder.com/83x100" alt="Image"></a></td>
-                                <td><a href="#">{{ item.product.name }}</a></td>
-                                <td>{{ item.product.unitPrice|number_format(2, ',', ' ') }} MAD</td>
-                                <td>
-                                    <div class="qty">
-                                        <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                        <input type="text" value="{{ item.quantity }}">
-                                        <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </td>
-                                <td>{{ item.computeTotal|number_format(2, ',', ' ') }} MAD </td>
-                                <td><button><i class="fa fa-trash"></i></button></td>
-                            </tr>
+                            {# render each collection item #}
+                            {% for item in form.cartItems %}
+                                {{ form_row(item) }}
                             {% endfor %}
                             </tbody>
                         </table>
@@ -47,7 +39,7 @@
                 <div class="col-md-6">
                     <div class="coupon">
                         <input type="text" placeholder="Coupon Code">
-                        <button>Apply Code</button>
+                        {{ form_widget(form.apply_code)}}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -59,14 +51,20 @@
                             <h4>Grand Total<span>{{ cart.computeTotal|number_format(2, ',', ' ') }} MAD</span></h4>
                         </div>
                         <div class="cart-btn">
-                            <button>Update Cart</button>
-                            <button>Checkout</button>
+                            {{ form_widget(form.updateCart)}}
+                            {{ form_widget(form.checkout)}}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Cart End -->
-
+    {{ form_end(form) }}
+{% endblock %}
+{% block styles %}
+    {# override some part of the CSS #}
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet"/>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ asset('js/addToCart.js') }}"></script>
 {% endblock %}

@@ -146,4 +146,9 @@ class CartFile implements CartInterface
         $reflexion->getProperty('id')
             ->setValue($cart, 1);
     }
+
+    public function updateCart(Cart $cart): void
+    {
+        // TODO: Implement updateCart() method.
+    }
 }

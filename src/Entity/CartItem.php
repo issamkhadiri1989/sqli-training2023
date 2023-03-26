@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\CartItemRepository;
+use App\Validator\Constraint\InStore;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
+#[InStore(groups: ['add_to_cart', 'cart'])]
 class CartItem
 {
     #[ORM\Id]
@@ -17,7 +19,7 @@ class CartItem
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Assert\NotNull, Assert\NotBlank, Assert\GreaterThan(0)]
+    #[Assert\NotNull(groups: ['add_to_cart', 'cart']), Assert\NotBlank(groups: ['add_to_cart', 'cart']), Assert\GreaterThan(0, groups: ['add_to_cart', 'cart'])]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne]
@@ -38,7 +40,7 @@ class CartItem
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): self
+    public function setQuantity(?int $quantity): self
     {
         $this->quantity = $quantity;
 
