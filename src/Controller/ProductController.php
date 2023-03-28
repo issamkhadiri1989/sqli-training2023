@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Form\Type\CartItemType;
 use App\Form\Type\ProductType;
 use App\Repository\ProductRepository;
 use App\Service\CartInterface;
 use App\Service\CartItemManager;
+use App\Voter\EditProductVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -90,6 +90,27 @@ class ProductController extends AbstractController
     }
 
     #[Route('/add', name: 'app_add_product', priority: 2)]
+    public function add(Request $request, ProductRepository $repository): Response
+    {
+        // you can enable access control using the code bellow
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $var = $form->get('test')->getData();
+            $repository->save($product, true);
+            $this->addFlash('success', 'Product saved successfully');
+
+            return $this->redirectToRoute('app_edit_product', ['id' => $product->getId()]);
+        }
+
+        return $this->render(
+            'product/add.html.twig',
+            ['addForm' => $form->createView()]
+        );
+    }
+
+//    #[IsGranted(attribute: EditProductVoter::EDIT, subject: 'product')]
     #[Route('/edit/{id}', name: 'app_edit_product', priority: 3)]
     /**
      * @see https://symfony.com/bundles/SensioFrameworkExtraBundle/current/annotations/security.html
@@ -97,20 +118,19 @@ class ProductController extends AbstractController
      *
      * This action is accessible with 2 routes: add and edit.
      */
-    public function add(Request $request, ProductRepository $repository, ?Product $product = null): Response
+    public function edit(Request $request, ProductRepository $repository, Product $product): Response
     {
         // you can enable access control using the code bellow
-        // $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $requestRoute = $request->attributes->get('_route');
-        $isAddRoute = 'app_add_product' === $requestRoute;
-        if (true === $isAddRoute) {
-            $product = new Product();
-        }
+        $this->denyAccessUnlessGranted(EditProductVoter::EDIT, $product);
+        /*if (!$this->isGranted(EditProductVoter::EDIT, $product)) {
+            throw $this->createAccessDeniedException()
+        }*/
+
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $var = $form->get('test')->getData();
-            $repository->save($product, $isAddRoute);
+            $repository->save($product);
             $this->addFlash('success', 'Product saved successfully');
 
             return $this->redirectToRoute('app_edit_product', ['id' => $product->getId()]);

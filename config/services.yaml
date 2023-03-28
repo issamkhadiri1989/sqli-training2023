@@ -27,3 +27,7 @@ services:
     App\Service\CartFile:
         arguments:
             $dataPath: '%app.cart.persist_path%'
+
+    App\EventListener\ErrorListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: handleAccessDenied }
