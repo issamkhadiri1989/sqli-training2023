@@ -1,0 +1,47 @@
+{% extends 'layout.html.twig' %}
+{% block content %}
+    <!-- Login Start -->
+    <div class="login">
+    <div class="container">
+        <div class="section-header">
+            <h3>User Registration</h3>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultricies.
+                Nullam
+                consequat, mauris non interdum cursus
+            </p>
+        </div>
+        <div class="container-fluid">
+            {{ form_start(registration) }}
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="register-form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form_row(registration.username) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form_row(registration.userPassword.first) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form_row(registration.userPassword.second) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button type="submit" class="btn">
+                        Create account
+                    </button>
+                </div>
+            </div>
+            {{ form_end(registration) }}
+        </div>
+    </div>
+{% endblock %}

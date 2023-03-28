@@ -18,6 +18,7 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            user_checker: App\Security\AccountChecker
             custom_authenticator: App\Security\LoginAuthenticator
             logout:
                 path: app_logout

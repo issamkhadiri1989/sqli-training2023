@@ -30,4 +30,4 @@ services:
 
     App\EventListener\ErrorListener:
         tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: handleAccessDenied }
+            - { name: kernel.event_listener, event: kernel.exception, method: handleAccessDenied, priority: 16 }

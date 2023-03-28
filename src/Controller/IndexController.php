@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\Type\ContactType;
+use App\Form\Type\RegisterType;
 use App\Model\Contact;
 use App\Repository\ProductRepository;
+use App\Service\Account;
 use App\Service\Mailer\MessageSender;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,5 +62,23 @@ class IndexController extends AbstractController
         }
 
         return $this->render('index/contact_us.html.twig', ['contact_form' => $form->createView()]);
+    }
+
+    #[Route(path: '/create-account', name: 'app_register')]
+    public function register(Request $request, Account $subscription): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegisterType::class, $user);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $subscription->registerSubscription($user);
+            $this->addFlash('success', 'Your registration has been taken saved');
+
+            return $this->redirectToRoute('app_index');
+        }
+
+        return $this->render('index/register.html.twig', [
+            'registration' => $form->createView(),
+        ]);
     }
 }

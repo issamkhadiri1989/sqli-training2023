@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ErrorListener
 {
@@ -18,7 +19,7 @@ class ErrorListener
     public function handleAccessDenied(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        if ($exception instanceof AccessDeniedHttpException) {
+        if ($exception instanceof AccessDeniedHttpException || $exception instanceof AccessDeniedException) {
             $event->setResponse(new RedirectResponse($this->generator->generate('app_index')));
         }
     }
