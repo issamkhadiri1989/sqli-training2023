@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Validator\Constraint\Phone;
 use App\Validator\Constraint\ValidPassword;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'This user already exists')]
@@ -23,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotNull(groups: ['registration']), Assert\NotBlank(groups: ['registration'])]
     private ?string $username = null;
 
     #[ORM\Column]
@@ -41,8 +44,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $lastConnectionTime = null;
 
     //<editor-fold desc="Comment this code if you prefer not to use a dedicated field to use registration password">
-    #[ValidPassword]
+    #[ValidPassword(groups: ['registration'])]
     private ?string $userPassword = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(groups: ['profile']), Assert\NotBlank(groups: ['profile'])]
+    private ?string $fullName = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(min: 20, max: 100, groups: ['profile'])]
+    private ?string $address = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Phone(groups: ['profile'])]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Email(groups: ['profile'])]
+    private ?string $email = null;
 
     public function getUserPassword(): ?string
     {
@@ -180,6 +199,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastConnectionTime(?\DateTimeInterface $lastConnectionTime): self
     {
         $this->lastConnectionTime = $lastConnectionTime;
+
+        return $this;
+    }
+
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
+    }
+
+    public function setFullName(?string $fullName): self
+    {
+        $this->fullName = $fullName;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

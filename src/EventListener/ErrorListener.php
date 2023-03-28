@@ -20,7 +20,7 @@ class ErrorListener
     {
         $exception = $event->getThrowable();
         if ($exception instanceof AccessDeniedHttpException || $exception instanceof AccessDeniedException) {
-            $event->setResponse(new RedirectResponse($this->generator->generate('app_index')));
+            /*$event->setResponse(new RedirectResponse($this->generator->generate('app_index')))*/;
         }
     }
 

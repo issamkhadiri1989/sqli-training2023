@@ -48,6 +48,7 @@ class RegisterType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
             'label' => false,
+            'validation_groups' => ['registration'],
         ]);
     }
 }

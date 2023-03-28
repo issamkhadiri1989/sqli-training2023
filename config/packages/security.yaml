@@ -40,6 +40,7 @@ security:
 #         - { path: ^/product/add, roles: ROLE_ADMIN }
          - { path: ^/product/add, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/product/edit, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
