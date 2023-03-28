@@ -30,6 +30,10 @@ class Store
     #[ORM\OneToMany(mappedBy: 'store', targetEntity: Product::class, orphanRemoval: true)]
     private Collection $products;
 
+    #[ORM\ManyToOne(inversedBy: 'stores')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -102,6 +106,18 @@ class Store
                 $product->setStore(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

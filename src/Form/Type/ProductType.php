@@ -7,7 +7,9 @@ namespace App\Form\Type;
 use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\Store;
+use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -18,8 +20,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var User $connectedUser */
+        $connectedUser = $this->security->getUser();
+        $ownedStores = $connectedUser->getStores();
+
         $builder->add('name', TextType::class)
             ->add('shortDescription', TextareaType::class)
             ->add('fullDescription', TextareaType::class)
@@ -34,6 +44,7 @@ class ProductType extends AbstractType
 
                     return $name;
                 },
+                'choices' => $ownedStores,
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,

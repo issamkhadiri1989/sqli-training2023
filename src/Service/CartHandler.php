@@ -20,10 +20,10 @@ class CartHandler implements CartInterface
     private SessionInterface $session;
 
     public function __construct(
-        private readonly RequestStack $request,
+        RequestStack $request,
         private readonly EntityManagerInterface $manager
     ) {
-        $this->session = $this->request->getSession();
+        $this->session = $request->getSession();
     }
 
     /**

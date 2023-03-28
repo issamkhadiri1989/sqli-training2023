@@ -33,7 +33,9 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav m-auto">
                         <a href="{{ url('app_index') }}" class="nav-item nav-link active">Home</a>
-                        <a href="product-list.html" class="nav-item nav-link">Products</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ url('app_add_product') }}" class="nav-item nav-link">Products</a>
+                        {% endif %}
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu">
