@@ -41,6 +41,7 @@ security:
          - { path: ^/product/add, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/product/edit, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/reset-password, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
