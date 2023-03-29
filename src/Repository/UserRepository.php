@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\User;
@@ -54,6 +56,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
 
         $this->save($user, true);
+    }
+
+    /**
+     * Gets all accounts that have not been used for $days day period.
+     *
+     * @param int $days
+     *
+     * @return User[]
+     *
+     * @throws \Exception
+     */
+    public function retrieveOldAccounts(int $days): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        // get back $days days in the past
+        $limitDate = new \DateTime((-$days) . ' days');
+
+        $query = $queryBuilder
+//            ->select('u.')
+            ->where('u.lastConnectionTime < :date')
+            ->andWhere('u.enabled = :status')
+            ->setParameter('date', $limitDate)
+            ->setParameter('status', true)
+            ->getQuery();
+
+        return $query->getResult();
     }
 
 //    /**
