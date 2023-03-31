@@ -12,6 +12,7 @@ use App\Service\CartInterface;
 use App\Service\CartItemManager;
 use App\Voter\EditProductVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,6 +112,7 @@ class ProductController extends AbstractController
     }
 
 //    #[IsGranted(attribute: EditProductVoter::EDIT, subject: 'product')]
+//    #[Security("is_granted('is_capable_to_vote', product)")]
     #[Route('/edit/{id}', name: 'app_edit_product', priority: 3)]
     /**
      * @see https://symfony.com/bundles/SensioFrameworkExtraBundle/current/annotations/security.html

@@ -9,6 +9,7 @@ use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Enum\CartStatus;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -17,13 +18,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class CartHandler implements CartInterface
 {
-    private SessionInterface $session;
-
     public function __construct(
-        RequestStack $request,
+        private readonly RequestStack $request,
         private readonly EntityManagerInterface $manager
     ) {
-        $this->session = $request->getSession();
     }
 
     /**
@@ -90,8 +88,8 @@ class CartHandler implements CartInterface
      */
     public function getCartInstance(): Cart
     {
-        if ($this->session->has('cart_id')) {
-            $cartId = $this->session->get('cart_id');
+        if ($this->request->getSession()->has('cart_id')) {
+            $cartId = $this->request->getSession()->get('cart_id');
 
             return $this->doRetrieveRefreshedCartInstance($cartId);
         }
@@ -108,7 +106,7 @@ class CartHandler implements CartInterface
     {
         $cart = $this->doCreateNewCart();
 
-        $this->session->set('cart_id', $cart->getId());
+        $this->request->getSession()->set('cart_id', $cart->getId());
 
         return $cart;
     }

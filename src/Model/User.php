@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\PrePersist;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[HasLifecycleCallbacks]
 class User
 {
     #[Assert\NotNull, Assert\NotBlank] // validated by `Default` and `User` validation groups
@@ -58,5 +61,11 @@ class User
     public function setAge(int $age): void
     {
         $this->age = $age;
+    }
+
+    #[PrePersist]
+    public function defineSomething()
+    {
+        $this->address = '00000';
     }
 }

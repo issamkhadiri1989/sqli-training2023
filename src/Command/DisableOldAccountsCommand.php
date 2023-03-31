@@ -5,22 +5,42 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\User;
+use App\Service\CartInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * This command lists and disabled accounts considered as old.
+ *
+ * To run this command, you can use :
+ * php bin/console app:accounts:disable
+ * php bin/console app:accounts:disable --show-accounts
+ * php bin/console app:accounts:disable --ids=11 -i12 -i 13  --show-accounts  -- 365
+ *                                                                            ^ these `--` are optional, but they act like a separator between arguments and options
+ * (for example here, we are going to disable all accounts except those with ids 11, 12 and 13)
+ */
 class DisableOldAccountsCommand extends Command
 {
     private EntityManagerInterface $manager;
+    private int $limitDays;
+    private CartInterface $cart;
 
-    public function __construct(EntityManagerInterface $manager)
-    {
+    public function __construct(
+        CartInterface $cart,
+        EntityManagerInterface $manager,
+        int $defaultLimitDays
+    ) {
         $this->manager = $manager;
+        $this->cart = $cart;
+        $this->limitDays = $defaultLimitDays;
         parent::__construct();
     }
 
@@ -28,6 +48,9 @@ class DisableOldAccountsCommand extends Command
     {
         $this->setName('app:accounts:disable')
             ->setDescription('Disables all accounts that have not been used since 1 year now.')
+            ->addArgument('limit_days', InputArgument::REQUIRED, 'The limit count of days that should be used to disable accounts.')
+            ->addOption('show-accounts', 's', InputOption::VALUE_NONE, 'Whether show a table containing the list of accounts or not.')
+            ->addOption('ids', 'i', InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Set of ids to exclude')
         ;
     }
 
@@ -50,11 +73,15 @@ class DisableOldAccountsCommand extends Command
         $styler->info('Command launched at '.(new \DateTimeImmutable())->format('d/m/Y H:i:s'));
         /*$styler->text('text');*/
 
+        $limit = (int) $input->getArgument('limit_days');
+        $mustShow = $input->getOption('show-accounts');
+        $accountsToExclude = $input->getOption('ids');
+
         try {
             $inactiveAccounts = $this->manager
                 ->getRepository(User::class)
-                ->retrieveOldAccounts(365);
-        } catch (\Exception) {
+                ->retrieveOldAccounts($limit, $accountsToExclude);
+        } catch (\Exception $e) {
             $styler->error('The command has stopped unexpectedly');
 
             return self::FAILURE;
@@ -62,7 +89,9 @@ class DisableOldAccountsCommand extends Command
 
         if (($count = \count($inactiveAccounts)) > 0) {
             $styler->text(\sprintf('<info>%d</info> accounts found to delete', $count));
-            $this->renderAllAccountsToDelete($output, $inactiveAccounts);
+            if (true === $mustShow) {
+                $this->renderAllAccountsToDelete($output, $inactiveAccounts);
+            }
             $answer = $this->askUserPermissionToDelete($input, $output);
 
             if (true === $answer) {

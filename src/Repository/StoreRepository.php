@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Store;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -41,28 +42,18 @@ class StoreRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Store[] Returns an array of Store objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+/*    public function showStore()
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
 
-//    public function findOneBySomeField($value): ?Store
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $queryBuilder
+            ->select('s.id, s.address, u.username')
+            ->leftJoin(User::class, 'u')
+            ->getQuery()
+            ->setMaxResults(10)
+            ->setFirstResult(0)
+            ->getResult();
+
+    }*/
+
 }

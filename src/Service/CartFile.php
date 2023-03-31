@@ -21,9 +21,9 @@ class CartFile implements CartInterface
     /**
      * @param string $dataPath The directory path where the carts will be stored
      */
-    public function __construct(private readonly string $dataPath, RequestStack $requestStack)
+    public function __construct(private readonly string $dataPath, private readonly RequestStack $requestStack)
     {
-        $this->session = $requestStack->getSession();
+
     }
 
     public function addToCart(Product $product, int $quantity): void
@@ -45,7 +45,7 @@ class CartFile implements CartInterface
      */
     public function getCartInstance(): Cart
     {
-        if ($this->session->has('file_cart_id')) {
+        if ($this->requestStack->getSession()->has('file_cart_id')) {
             // get the content from the file
             $cart = $this->getCartInfoFromFile();
         } else {
@@ -93,7 +93,7 @@ class CartFile implements CartInterface
     private function createCartFile(Cart $cart): void
     {
         $uid = \uniqid();
-        $this->session->set('file_cart_id', $uid);
+        $this->requestStack->getSession()->set('file_cart_id', $uid);
         $filePattern = \sprintf('%s/cart-%s.txt', $this->dataPath, $uid);
         $fid = \fopen($filePattern, 'a');
         \fprintf($fid, "ID=%s\tCREATE=%s\tSTATUS=%s\n", $uid, $cart->getCreatedAt()->format('Y-m-d\Th:i:s'), $cart->getStatus()->value);
@@ -109,7 +109,7 @@ class CartFile implements CartInterface
      */
     private function getCartInfoFromFile(): Cart
     {
-        $uid = $this->session->get('file_cart_id');
+        $uid = $this->requestStack->getSession()->get('file_cart_id');
         $filePattern = \sprintf('%s/cart-%s.txt', $this->dataPath, $uid);
         if (\file_exists($filePattern)) {
             // the cart file has been found and the cart instance can be created

@@ -62,50 +62,66 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Gets all accounts that have not been used for $days day period.
      *
      * @param int $days
+     * @param array $excludedIds
      *
      * @return User[]
      *
      * @throws \Exception
      */
-    public function retrieveOldAccounts(int $days): array
+    public function retrieveOldAccounts(int $days, array $excludedIds): array
     {
         $queryBuilder = $this->createQueryBuilder('u');
         // get back $days days in the past
         $limitDate = new \DateTime((-$days) . ' days');
 
         $query = $queryBuilder
-//            ->select('u.')
+            ->select('u')
             ->where('u.lastConnectionTime < :date')
             ->andWhere('u.enabled = :status')
             ->setParameter('date', $limitDate)
-            ->setParameter('status', true)
-            ->getQuery();
+            ->setParameter('status', true);
 
-        return $query->getResult();
+        if (!empty($excludedIds)) {
+            $expression = $queryBuilder->expr();
+            $excludeIdsCondition = $expression->notIn('u.id', ':excludedIds');
+            $query->andWhere($excludeIdsCondition)
+                ->setParameter('excludedIds', $excludedIds);
+        }
+
+        return $query
+            ->getQuery()
+            ->getResult();
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * This function tries to build the following query:
+     *     `select * from user where enabled=0 or (enable=1 and last_connection_time > '2023-01-001').`
+     *
+     * @return void
+     */
+    public function getDisabledOrEnabledAccountThisYear(): void
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        $expression = $queryBuilder->expr();
+        $disabledAccountsCondition = $expression->eq('u.enabled', ':param1');
+        $enabledAccountsCondition = $expression->eq('u.enabled', ':param2');
+        $lastConnectedCondition = $expression->gt('u.lastConnectionTime', ':param3');
+
+        // (enabled=1 and last_connection_time > '2023-01-01')
+        $condition1 = $expression->andX($enabledAccountsCondition, $lastConnectedCondition);
+
+        // enabled=0 or ($condition1)
+        $condition2 = $expression->orX($disabledAccountsCondition, $condition1);
+
+        // where ($condition2 or ($condition1))
+        $queryBuilder->where($condition2)
+            /*->where($disabledAccountsCondition)
+            ->orWhere($condition1)*/
+            ->setParameter('param1', false)
+            ->setParameter('param2', true)
+            ->setParameter('param3', new \DateTimeImmutable('2023-01-01'))
+            ->getQuery()
+            ->getResult();
+    }
 }

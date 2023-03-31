@@ -2,11 +2,13 @@ parameters:
     # Parameters are defined here. They can be a simple value or get from an Env()
     app.mailer.admin_email: '%env(APP_ADMIN_EMAIL)%'
     app.cart.persist_path: '%kernel.project_dir%/data'
+    app.accounts.count_days_before_disabling: 365
 services:
     _defaults:
         autowire: true
         autoconfigure: true
         bind:
+            App\Service\CartInterface: '@App\Service\CartHandler'
             string $adminEmail: 'admin@system.com'  # here we bind all $adminEmail parameters to this value
 #            string $supportEmail: 'support@system.com'
 
@@ -21,7 +23,6 @@ services:
 
     # The following two implementation are just an example of how to inject services with Interface
     App\Service\CartInterface $cartFile: '@App\Service\CartFile'
-    App\Service\CartInterface: '@App\Service\CartHandler'
 
     # The following example shows how to inject a parameter inside a service
     App\Service\CartFile:
@@ -31,3 +32,14 @@ services:
     App\EventListener\ErrorListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: handleAccessDenied, priority: 16 }
+
+    App\Command\DisableOldAccountsCommand:
+        arguments:
+#            - '@App\Service\CartFile'
+#            - '@doctrine.orm.default_entity_manager'
+#            - '%app.accounts.count_days_before_disabling%'
+            $defaultLimitDays: '%app.accounts.count_days_before_disabling%'
+            $cart: '@App\Service\CartFile'
+
+#    app_disable_accounts:
+#        alias: '@App\Command\DisableOldAccountsCommand'
